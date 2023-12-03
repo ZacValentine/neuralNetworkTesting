@@ -2,9 +2,7 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 
-
 #
-
 
 class Value:
 
@@ -60,6 +58,12 @@ class Value:
     def __truediv__(self, other): # self / other
         return self * (other**-1)
     
+    def __neg__(self): #-self
+        return self * -1
+    
+    def __sub__(self, other): # self - other
+        return self + (-other)
+    
     def tanh(self):
         x = self.data
         t = (math.exp(2*x) - 1)/(math.exp(2*x) + 1)
@@ -97,18 +101,6 @@ class Value:
         for node in reversed(topo):
             node._backward()
 
-
-
-a = Value(2.0, label='a')
-b = Value(-3.0, label='b')
-c = Value(10.0, label='c')
-# a + b #same as - a.__add__(b)
-e = a*b; e.label = 'e'
-#d = a * b + c  # same as a.__mul(b).add(c)
-d = e+c; d.label = 'd'
-f = Value(-2.0, label='f')
-L = d * f; L.label = 'L'
-
 #
 
 # inputs x1, x2
@@ -125,11 +117,47 @@ x2w2 = x2*w2; x2w2.label = 'x2*w2'
 x1w1x2w2 = x1w1 + x2w2; x1w1x2w2.label = 'x1*w1 + x2*w2'
 n = x1w1x2w2 + b; n.label = 'n'
 o = n.tanh(); o.label = 'o'
-
 o.backward()
-#print(o.grad, n.grad, b.grad, x1w1x2w2.grad, x2w2.grad, x1w1.grad, x1.grad, w1.grad, x2.grad, w2.grad)
+print("o.grad", o.grad, '\n',
+      "n.grad", n.grad, '\n',
+      "x1w1x2w2.grad", x1w1x2w2.grad, '\n',
+      "x1w1.grad", x1w1.grad, '\n',
+      "x2w2.grad", x2w2.grad, '\n',
+      "b.grad", b.grad, '\n',
+      "w1.grad", w1.grad, '\n',
+      "x1.grad", x1.grad, '\n',
+      "w2.grad", w2.grad, '\n',
+      "x2.grad", x2.grad, '\n',)
 
 #
 
+# inputs x1, x2
+x1 = Value(2.0, label='x1')
+x2 = Value(0.0, label='x2')
+# weights w1, w2
+w1 = Value(-3.0, label='w1')
+w2 = Value(1.0, label='w2')
+# bias of the neuron
+b = Value(6.8813735870195432, label='b')
+# x1*w1 + x2*w2 + b
+x1w1 = x1*w1; x1w1.label = 'x1*w1'
+x2w2 = x2*w2; x2w2.label = 'x2*w2'
+x1w1x2w2 = x1w1 + x2w2; x1w1x2w2.label = 'x1*w1 + x2*w2'
+n = x1w1x2w2 + b; n.label = 'n'
+# ----
+e = (2*n).exp()
+o = (e - 1) / (e + 1)
+#----
+o.label = 'o'
+o.backward()
 
-
+print("o.grad", o.grad, '\n',
+      "n.grad", n.grad, '\n',
+      "x1w1x2w2.grad", x1w1x2w2.grad, '\n',
+      "x1w1.grad", x1w1.grad, '\n',
+      "x2w2.grad", x2w2.grad, '\n',
+      "b.grad", b.grad, '\n',
+      "w1.grad", w1.grad, '\n',
+      "x1.grad", x1.grad, '\n',
+      "w2.grad", w2.grad, '\n',
+      "x2.grad", x2.grad, '\n',)
