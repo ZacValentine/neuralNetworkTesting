@@ -162,23 +162,26 @@ xs = [[2.0, 3.0, -1.0],
       [0.5, 1.0, 1.0],
       [1.0, 1.0, -1.0]]
 ys = [1.0, -1.0, -1.0, 1.0] # desired targets # ygt - y ground truth
-ypred = [n(x) for x in xs]
+
+#
+
+for k in range(20):
+  # forward pass
+  ypred = [n(x) for x in xs]
+  loss = sum(((yout - ygt)**2 for ygt, yout in zip(ys, ypred)), Value(0.0))
+
+  # backward pass
+  for p in n.parameters():
+    p.grad = 0.0
+  loss.backward()
+
+  # update
+  for p in n.parameters(): # update weights
+    p.data += -0.05 * p.grad
+  
+  #print(k, loss.data)
+print(k, loss.data)
+
+#
+
 ypred
-
-#
-
-loss = sum(((yout - ygt)**2 for ygt, yout in zip(ys, ypred)), Value(0.0)) # the Value(0.0) makes it work
-loss
-
-#
-
-loss.backward()
-
-#
-
-n.layers[0].neurons[0].w[0].data
-
-#
-
-for p in n.parameters():
-  p.data += -0.01 * p.grad
